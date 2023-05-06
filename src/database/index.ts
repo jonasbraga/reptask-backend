@@ -10,8 +10,8 @@ export async function connect() {
         username: 'postgres',
         password: process.env.DATABASE_PASS,
         database: 'reptask',
-        logging: true,
-        entities: ['src/database/models/*.ts']
+        logging: true
+      //   entities: ['src/database/models/*.ts']
      });
 
     return conn;

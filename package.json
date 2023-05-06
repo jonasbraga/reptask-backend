@@ -15,7 +15,6 @@
     "easy-ftp": "^0.4.2",
     "express": "^4.17.2",
     "moment-timezone": "^0.5.39",
-    "mysql2": "^2.3.3",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.41",
