@@ -33,9 +33,9 @@ export class CommentController {
         });
       }
     } catch (error) {
-      return response.status(400).send({
-        error: "Houve um erro na aplicação",
-        message: error,
+      console.log(error);
+      return response.status(500).send({
+        error: "Houve um erro na aplicação"
       });
     }
   }
@@ -54,7 +54,7 @@ export class CommentController {
             
             return response.status(200).send(comments);
         } else {
-            return response.status(400).send({
+            return response.status(500).send({
                 error: "Houve um erro na aplicação",
                 message: "Erro ao buscar comentários da tarefa",
               });
@@ -63,10 +63,10 @@ export class CommentController {
         
         
     } catch (error) {
-        return response.status(400).send({
-            error: "Houve um erro na aplicação",
-            message: error,
-          });
+      console.log(error);
+      return response.status(500).send({
+        error: "Houve um erro na aplicação"
+      });
     }
   }
 }
