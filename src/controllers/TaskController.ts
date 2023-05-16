@@ -46,9 +46,9 @@ export class TaskController {
         message: "Tarefa cadastrada com sucesso!",
       });
     } catch (error) {
-      return response.status(400).send({
-        error: "Houve um erro na aplicação",
-        message: error,
+      console.log(error);
+      return response.status(500).send({
+        error: "Houve um erro na aplicação"
       });
     }
   }
@@ -86,9 +86,9 @@ export class TaskController {
         message: "Tarefa editado com sucesso!",
       });
     } catch (error) {
-      return response.status(400).send({
-        error: "Houve um erro na aplicação",
-        message: error,
+      console.log(error);
+      return response.status(500).send({
+        error: "Houve um erro na aplicação"
       });
     }
   }
@@ -107,17 +107,17 @@ export class TaskController {
         message: "Tarefa excluído com sucesso!",
       });
     } catch (error) {
-      return response.status(400).send({
-        error: "Houve um erro na aplicação",
-        message: error,
+      console.log(error);
+      return response.status(500).send({
+        error: "Houve um erro na aplicação"
       });
     }
   }
 
-  async get(req: Request, res: Response) {
+  async get(request: Request, response: Response) {
     try {
-      const user = Number(req.params.username);
-      const option = Number(req.params.option);
+      const user = Number(request.params.username);
+      const option = Number(request.params.option);
 
       const taskQuery = manager
         .createQueryBuilder()
@@ -130,31 +130,31 @@ export class TaskController {
         // somente pendentes
         case 0:
           taskQuery.andWhere("scores.finished = false");
-          return res.status(200).send(await taskQuery.getRawMany());
+          return response.status(200).send(await taskQuery.getRawMany());
         // break;
 
         // somente finalizadas
         case 1:
           taskQuery.andWhere("scores.finished = true");
-          return res.status(200).send(await taskQuery.getRawMany());
+          return response.status(200).send(await taskQuery.getRawMany());
 
         // todas as tarefas
         case 2:
         default:
-          return res.status(200).send(await taskQuery.getRawMany());
+          return response.status(200).send(await taskQuery.getRawMany());
           // break;
       }
     } catch (error) {
       console.log("error");
       console.log(error);
-      return res.status(400).send({
-        error: "Houve um erro na aplicação",
-        message: error,
+      console.log(error);
+      return response.status(500).send({
+        error: "Houve um erro na aplicação"
       });
     }
   }
 
-  async getAll(req: Request, res: Response) {
+  async getAll(request: Request, response: Response) {
     try {
       
       const tasksQuery = await manager
@@ -162,19 +162,19 @@ export class TaskController {
       .select("*")
       .from("tasks", "")
       .innerJoin("scores", "", 'tasks.id = scores.task_id');
-      const user = Number(req.params.username);
+      const user = Number(request.params.username);
       if(user){
         tasksQuery.where(`scores.responsible_user = ${user}`);
-        return res.status(200).send(tasksQuery.getRawMany());
+        return response.status(200).send(tasksQuery.getRawMany());
       } else {
-        return res.status(200).send(tasksQuery.getRawMany());
+        return response.status(200).send(tasksQuery.getRawMany());
       }
     } catch (error) {
       console.log("error");
       console.log(error);
-      return res.status(400).send({
-        error: "Houve um erro na aplicação",
-        message: error,
+      console.log(error);
+      return response.status(500).send({
+        error: "Houve um erro na aplicação"
       });
     }
   }
