@@ -55,7 +55,9 @@ export class TaskController {
       const body = request.body;
       const task_id = request.params.id;
 
-      await manager
+      const updateQueries = []
+
+      updateQueries.push(manager
         .createQueryBuilder()
         .update("public.tasks")
         .set({
@@ -64,10 +66,10 @@ export class TaskController {
           deadline: body.deadline,
         })
         .where(`id = ${task_id}`)
-        .execute();
+        .execute());
 
       if (body.hasOwnProperty("score")) {
-        await manager
+        updateQueries.push(manager
           .createQueryBuilder()
           .update("public.scores")
           .set({
@@ -76,8 +78,10 @@ export class TaskController {
             finished: body.score.finished,
           })
           .where(`task_id = ${task_id}`)
-          .execute();
+          .execute());
       }
+
+      await Promise.all(updateQueries);
 
       response.status(200).send({
         message: "Tarefa editada com sucesso!",
@@ -133,20 +137,20 @@ export class TaskController {
         // somente pendentes
         case 0:
           taskQuery.andWhere("scores.finished = false");
-          return response.status(200).send(await taskQuery.getRawMany());
-        // break;
+          break;
 
         // somente finalizadas
         case 1:
           taskQuery.andWhere("scores.finished = true");
-          return response.status(200).send(await taskQuery.getRawMany());
+          break;
 
         // todas as tarefas
         case 2:
         default:
-          return response.status(200).send(await taskQuery.getRawMany());
-        // break;
+          break;
       }
+      const results = await taskQuery.getRawMany()
+      return response.status(200).send(results);
     } catch (error) {
       console.error(error);
       return response.status(500).send({
@@ -157,21 +161,19 @@ export class TaskController {
 
   async getAll(request: Request, response: Response) {
     try {
-
       const tasksQuery = manager
         .createQueryBuilder()
         .select("*")
         .from("tasks", "")
         .innerJoin("scores", "", 'tasks.id = scores.task_id');
+
       const user = Number(request.params.username);
       if (user) {
         tasksQuery.where(`scores.responsible_user = ${user}`);
-        var results = await tasksQuery.getRawMany();
-        return response.status(200).send(results);
-      } else {
-        var results = await tasksQuery.getRawMany();
-        return response.status(200).send(results);
       }
+      const results = await tasksQuery.getRawMany();
+
+      return response.status(200).send(results);
     } catch (error) {
       console.error(error);
       return response.status(500).send({
