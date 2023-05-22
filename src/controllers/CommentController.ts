@@ -33,7 +33,7 @@ export class CommentController {
         });
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -51,7 +51,7 @@ export class CommentController {
             .from('comments','')
             .where(`task_id = ${task}`)
             .getRawMany();
-            
+
             return response.status(200).send(comments);
         } else {
             return response.status(500).send({
@@ -60,10 +60,10 @@ export class CommentController {
               });
         }
 
-        
-        
+
+
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
