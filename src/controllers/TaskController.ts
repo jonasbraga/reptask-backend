@@ -43,7 +43,7 @@ export class TaskController {
         message: "Tarefa cadastrada com sucesso!",
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -80,10 +80,10 @@ export class TaskController {
       }
 
       response.status(200).send({
-        message: "Tarefa editado com sucesso!",
+        message: "Tarefa editada com sucesso!",
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -107,10 +107,10 @@ export class TaskController {
         .execute();
 
       response.status(200).send({
-        message: "Tarefa excluído com sucesso!",
+        message: "Tarefa excluída com sucesso!",
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -148,9 +148,7 @@ export class TaskController {
           // break;
       }
     } catch (error) {
-      console.log("error");
-      console.log(error);
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -175,9 +173,7 @@ export class TaskController {
         return response.status(200).send(results);
       }
     } catch (error) {
-      console.log("error");
-      console.log(error);
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
