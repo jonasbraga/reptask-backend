@@ -1,11 +1,8 @@
-import { connect } from "../database/index";
 import { Request, Response } from "express";
 import {
-  getConnectionManager,
-  getManager,
-  getConnection,
-  InsertResult,
+  getManager
 } from "typeorm";
+import { connect } from "../database/index";
 require("dotenv").config();
 
 connect();
@@ -75,10 +72,10 @@ export class TaskController {
           .update("public.scores")
           .set({
             responsible_user: body.score.responsible_user,
-            task_id: task_id,
             value: body.score.value,
             finished: body.score.finished,
           })
+          .where(`task_id = ${task_id}`)
           .execute();
       }
 
@@ -96,6 +93,12 @@ export class TaskController {
   async delete(request: Request, response: Response) {
     try {
       const task_id = request.params.id;
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from("public.scores")
+        .where(`task_id = ${task_id}`)
+        .execute();
       await manager
         .createQueryBuilder()
         .delete()
@@ -166,10 +169,10 @@ export class TaskController {
       if (user) {
         tasksQuery.where(`scores.responsible_user = ${user}`);
         var results = await tasksQuery.getRawMany();
-        console.log(results);
         return response.status(200).send(results);
       } else {
-        return response.status(200).send(tasksQuery.getRawMany());
+        var results = await tasksQuery.getRawMany();
+        return response.status(200).send(results);
       }
     } catch (error) {
       console.log("error");
