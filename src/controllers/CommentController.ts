@@ -1,11 +1,8 @@
-import { connect } from "../database/index";
 import { Request, Response } from "express";
 import {
-  getConnectionManager,
-  getManager,
-  getConnection,
-  InsertResult,
+  getManager
 } from "typeorm";
+import { connect } from "../database/index";
 require("dotenv").config();
 
 connect();
