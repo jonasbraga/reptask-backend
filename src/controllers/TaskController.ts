@@ -123,15 +123,18 @@ export class TaskController {
 
   async get(request: Request, response: Response) {
     try {
-      const user = Number(request.params.username);
       const option = Number(request.params.option);
 
       const taskQuery = manager
         .createQueryBuilder()
         .select("*")
         .from("tasks", "")
-        .innerJoin("scores", "","tasks.id = scores.task_id")
-        .where(`scores.responsible_user = ${user}`);
+        .innerJoin("scores", "","tasks.id = scores.task_id");
+
+      const user = Number(request.params.username);
+      if(user){
+        taskQuery.where(`scores.responsible_user = ${user}`);
+      }
 
       switch (option) {
         // somente pendentes
