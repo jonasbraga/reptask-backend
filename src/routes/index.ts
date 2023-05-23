@@ -2,6 +2,7 @@ import { Router } from "express";
 import { connect } from "../database/index";
 import { TaskController } from "../controllers/TaskController";
 import { CommentController } from "../controllers/CommentController";
+import { UserController } from "../controllers/UserController";
 // import { AuthController } from "../controllers/AuthController";
 
 
@@ -24,5 +25,10 @@ routes.route('/tasks/:id').delete(new TaskController().delete);
 routes.route('/tasks/:id').patch(new TaskController().edit);
 ///////////////////////////////////////////////////////////////////////
 
+
+routes.route("/users").post(new UserController().create);
+routes.route("/users-all").get(new UserController().getAll);
+routes.route('/users/:id').patch(new UserController().edit);
+routes.route('/users/:id').delete(new UserController().delete);
 
 export { routes };

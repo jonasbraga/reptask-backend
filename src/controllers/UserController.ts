@@ -11,39 +11,29 @@ require("dotenv").config();
 connect();
 const manager = getManager();
 
-export class TaskController {
+export class UserController {
   async create(request: Request, response: Response) {
     try {
+      console.log(request);
       const body = request.body;
-
-      const task = await manager
+      const user = await manager
         .createQueryBuilder()
         .insert()
-        .into("tasks")
+        .into("users")
         .values({
-          title: body.title,
-          description: body.description ? body.description : null,
-          deadline: body.deadline,
+          name: body.name,
+          email: body.email,
+          nickname: body.nickname,
+          password: body.password,
+          // photo: body.photo ? body.photo : null,
+          user_type: body.user_type,
+          reps_id: body.reps_id
         })
         .returning("id")
         .execute();
 
-      if (body.hasOwnProperty("score")) {
-        await manager
-          .createQueryBuilder()
-          .insert()
-          .into("public.scores")
-          .values({
-            task_id: task.raw[0].id,
-            responsible_user: body.score.responsible_user,
-            value: body.score.value,
-            finished: body.score.finished,
-          })
-          .execute();
-      }
-
       response.status(200).send({
-        message: "Tarefa cadastrada com sucesso!",
+        message: "Usuário cadastrada com sucesso!",
       });
     } catch (error) {
       console.log(error);
@@ -56,34 +46,25 @@ export class TaskController {
   async edit(request: Request, response: Response) {
     try {
       const body = request.body;
-      const task_id = request.params.id;
+      const user_id = request.params.id;
 
       await manager
         .createQueryBuilder()
-        .update("public.tasks")
+        .update("public.users")
         .set({
-          title: body.title,
-          description: body.description ? body.description : null,
-          deadline: body.deadline,
+          name: body.name,
+          email: body.email,
+          nickname: body.nickname,
+          password: body.password,
+          // photo: body.photo ? body.photo : null,
+          user_type: body.user_type,
+          reps_id: body.reps_id
         })
-        .where(`id = ${task_id}`)
+        .where(`id = ${user_id}`)
         .execute();
 
-      if (body.hasOwnProperty("score")) {
-        await manager
-          .createQueryBuilder()
-          .update("public.scores")
-          .set({
-            responsible_user: body.score.responsible_user,
-            task_id: task_id,
-            value: body.score.value,
-            finished: body.score.finished,
-          })
-          .execute();
-      }
-
       response.status(200).send({
-        message: "Tarefa editado com sucesso!",
+        message: "Usuário editado com sucesso!",
       });
     } catch (error) {
       console.log(error);
@@ -95,16 +76,24 @@ export class TaskController {
 
   async delete(request: Request, response: Response) {
     try {
-      const task_id = request.params.id;
+      const user_id = request.params.id;
+
       await manager
         .createQueryBuilder()
         .delete()
-        .from("public.tasks")
-        .where(`id = ${task_id}`)
+        .from("public.scores")
+        .where(`responsible_user = ${user_id}`)
+        .execute();
+
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from("public.users")
+        .where(`id = ${user_id}`)
         .execute();
 
       response.status(200).send({
-        message: "Tarefa excluído com sucesso!",
+        message: "Usuário excluído com sucesso!",
       });
     } catch (error) {
       console.log(error);
@@ -122,8 +111,8 @@ export class TaskController {
       const taskQuery = manager
         .createQueryBuilder()
         .select("*")
-        .from("tasks", "")
-        .innerJoin("scores", "", "tasks.id = scores.task_id")
+        .from("users", "")
+        .innerJoin("scores", "", "users.id = scores.user_id")
         .where(`scores.responsible_user = ${user}`);
 
       switch (option) {
@@ -157,20 +146,15 @@ export class TaskController {
   async getAll(request: Request, response: Response) {
     try {
 
-      const tasksQuery = manager
+      const usersQuery = manager
         .createQueryBuilder()
         .select("*")
-        .from("tasks", "")
-        .innerJoin("scores", "", 'tasks.id = scores.task_id');
-      const user = Number(request.params.username);
-      if (user) {
-        tasksQuery.where(`scores.responsible_user = ${user}`);
-        var results = await tasksQuery.getRawMany();
-        console.log(results);
-        return response.status(200).send(results);
-      } else {
-        return response.status(200).send(tasksQuery.getRawMany());
-      }
+        .from("users", "")
+
+      var results = await usersQuery.getRawMany();
+      console.log(results);
+      return response.status(200).send(results);
+
     } catch (error) {
       console.log("error");
       console.log(error);
