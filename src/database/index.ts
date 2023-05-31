@@ -7,9 +7,9 @@ export async function connect() {
         type: 'postgres',
         host: process.env.DATABASE_IP,
         port: parseInt(process.env.DATABASE_PORT),
-        username: 'postgres',
+        username: process.env.DATABASE_USER,
         password: process.env.DATABASE_PASS,
-        database: 'reptask',
+        database: process.env.DATABASE_NAME,
         logging: true
       //   entities: ['src/database/models/*.ts']
      });

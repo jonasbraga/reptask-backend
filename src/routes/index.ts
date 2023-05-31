@@ -19,7 +19,7 @@ routes.route('/comments/:task').get(new CommentController().get);
 
 /////////////// CRUD TASKS
 routes.route("/tasks-all/:username?").get(new TaskController().getAll);
-routes.route("/tasks/:username/:option").get(new TaskController().get);
+routes.route("/tasks/:option/:username?").get(new TaskController().get);
 routes.route("/tasks").post(new TaskController().create);
 routes.route('/tasks/:id').delete(new TaskController().delete);
 routes.route('/tasks/:id').patch(new TaskController().edit);
