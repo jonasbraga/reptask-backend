@@ -1,11 +1,8 @@
-import { connect } from "../database/index";
 import { Request, Response } from "express";
 import {
-  getConnectionManager,
-  getManager,
-  getConnection,
-  InsertResult,
+  getManager
 } from "typeorm";
+import { connect } from "../database/index";
 require("dotenv").config();
 
 connect();
@@ -14,7 +11,6 @@ const manager = getManager();
 export class UserController {
   async create(request: Request, response: Response) {
     try {
-      console.log(request);
       const body = request.body;
       const user = await manager
         .createQueryBuilder()
@@ -32,11 +28,12 @@ export class UserController {
         .returning("id")
         .execute();
 
-      response.status(200).send({
+      return response.status(200).send({
         message: "Usuário cadastrada com sucesso!",
+        user_id: user.raw[0].id
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -67,7 +64,7 @@ export class UserController {
         message: "Usuário editado com sucesso!",
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -96,7 +93,7 @@ export class UserController {
         message: "Usuário excluído com sucesso!",
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -108,35 +105,35 @@ export class UserController {
       const user = Number(request.params.username);
       const option = Number(request.params.option);
 
-      const taskQuery = manager
+      const userQuery = manager
         .createQueryBuilder()
         .select("*")
         .from("users", "")
         .innerJoin("scores", "", "users.id = scores.user_id")
         .where(`scores.responsible_user = ${user}`);
+      // No get de usuários não faria sentido retornas as tarefas relacionadas a ele?
 
       switch (option) {
         // somente pendentes
         case 0:
-          taskQuery.andWhere("scores.finished = false");
-          return response.status(200).send(await taskQuery.getRawMany());
-        // break;
+          userQuery.andWhere("scores.finished = false");
+          break;
 
         // somente finalizadas
         case 1:
-          taskQuery.andWhere("scores.finished = true");
-          return response.status(200).send(await taskQuery.getRawMany());
-
+          userQuery.andWhere("scores.finished = true");
+          break;
         // todas as tarefas
         case 2:
         default:
-          return response.status(200).send(await taskQuery.getRawMany());
-        // break;
+          break;
       }
+
+      const results = await userQuery.getRawMany()
+      return response.status(200).send(results);
+
     } catch (error) {
-      console.log("error");
-      console.log(error);
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -145,20 +142,15 @@ export class UserController {
 
   async getAll(request: Request, response: Response) {
     try {
-
       const usersQuery = manager
         .createQueryBuilder()
         .select("*")
         .from("users", "")
 
-      var results = await usersQuery.getRawMany();
-      console.log(results);
+      const results = await usersQuery.getRawMany();
       return response.status(200).send(results);
-
     } catch (error) {
-      console.log("error");
-      console.log(error);
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
