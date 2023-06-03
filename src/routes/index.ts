@@ -27,6 +27,7 @@ routes.route('/tasks/:id').patch(new TaskController().edit);
 
 
 routes.route("/users").post(new UserController().create);
+routes.route("/users/:username").get(new UserController().get);
 routes.route("/users-all").get(new UserController().getAll);
 routes.route('/users/:id').patch(new UserController().edit);
 routes.route('/users/:id').delete(new UserController().delete);

@@ -105,34 +105,44 @@ export class UserController {
 
   async get(request: Request, response: Response) {
     try {
-      const user = Number(request.params.username);
-      const option = Number(request.params.option);
+      const userId = Number(request.params.username);
+      // const option = Number(request.params.option);
 
-      const taskQuery = manager
+      const userQuery = manager
         .createQueryBuilder()
         .select("*")
         .from("users", "")
-        .innerJoin("scores", "", "users.id = scores.user_id")
-        .where(`scores.responsible_user = ${user}`);
+        // .innerJoin("scores", "", "users.id = scores.responsible_user")
+        .where(`id = ${userId}`);
 
-      switch (option) {
-        // somente pendentes
-        case 0:
-          taskQuery.andWhere("scores.finished = false");
-          return response.status(200).send(await taskQuery.getRawMany());
-        // break;
+      const user = await userQuery.getRawOne();
+      console.log(user['reps_id']);
+      const userPointsQuery = manager
+        .createQueryBuilder()
+        .select("SUM(value), count(*)")
+        .from("scores", "")
+        .andWhere(`responsible_user = ${user['id']}`);
 
-        // somente finalizadas
-        case 1:
-          taskQuery.andWhere("scores.finished = true");
-          return response.status(200).send(await taskQuery.getRawMany());
+      const userPoints = await userPointsQuery.getRawOne();
 
-        // todas as tarefas
-        case 2:
-        default:
-          return response.status(200).send(await taskQuery.getRawMany());
-        // break;
-      }
+      user['userPoints'] = userPoints['sum'] ? userPoints['sum'].toString() : 0;
+      user['userDoneTasks'] = userPoints['count'] ? userPoints['count'].toString() : 0;
+
+
+      const repQuery = manager
+        .createQueryBuilder()
+        .select("name")
+        .from("reps", "")
+        // .innerJoin("scores", "", "users.id = scores.user_id");
+        .where(`id = ${user['reps_id']}`);
+
+      const rep = await repQuery.getRawOne();
+      console.log(rep['name']);
+
+      user['reps_id'] = rep['name'];
+      return response.status(200).send(user);
+      // break;
+      // }
     } catch (error) {
       console.log("error");
       console.log(error);
