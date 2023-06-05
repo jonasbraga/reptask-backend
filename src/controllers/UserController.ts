@@ -1,44 +1,47 @@
-import { Request, Response } from "express";
-import {
-  getManager
-} from "typeorm";
 import { connect } from "../database/index";
+import { Request, Response } from "express";
+import bcrypt from "bcrypt";
+import {
+  getManager,
+} from "typeorm";
 require("dotenv").config();
 
 connect();
 const manager = getManager();
 
 export class UserController {
-  async create(request: Request, response: Response) {
-    try {
-      const body = request.body;
-      const user = await manager
-        .createQueryBuilder()
-        .insert()
-        .into("users")
-        .values({
-          name: body.name,
-          email: body.email,
-          nickname: body.nickname,
-          password: body.password,
-          // photo: body.photo ? body.photo : null,
-          user_type: body.user_type,
-          reps_id: body.reps_id
-        })
-        .returning("id")
-        .execute();
+    async create(request: Request, response: Response) {
+        try {
+          const body = request.body;
 
-      return response.status(200).send({
-        message: "Usuário cadastrada com sucesso!",
-        user_id: user.raw[0].id
-      });
-    } catch (error) {
-      console.error(error);
-      return response.status(500).send({
-        error: "Houve um erro na aplicação"
-      });
-    }
-  }
+          // Criptografar a senha
+          const hashedPassword = await bcrypt.hash(body.password, 10);
+
+          await manager
+            .createQueryBuilder()
+            .insert()
+            .into("users")
+            .values({
+              name: body.name,
+              email: body.email,
+              nickname: body.nickname,
+              password: hashedPassword, // Salvar a senha criptografada
+              user_type: body.user_type,
+              reps_id: body.reps_id
+            })
+            .returning("id")
+            .execute();
+
+          response.status(201).send({
+            message: "Usuário cadastrado com sucesso!",
+          });
+        } catch (error) {
+          console.error(error);
+          return response.status(500).send({
+            error: "Houve um erro na aplicação"
+          });
+        }
+      }
 
   async edit(request: Request, response: Response) {
     try {
@@ -52,7 +55,7 @@ export class UserController {
           name: body.name,
           email: body.email,
           nickname: body.nickname,
-          password: body.password,
+          // password: body.password,
           // photo: body.photo ? body.photo : null,
           user_type: body.user_type,
           reps_id: body.reps_id
@@ -103,43 +106,53 @@ export class UserController {
   async get(request: Request, response: Response) {
     try {
       const userId = Number(request.params.username);
-      // const option = Number(request.params.option);
 
       const userQuery = manager
         .createQueryBuilder()
         .select("*")
         .from("users", "")
-        // .innerJoin("scores", "", "users.id = scores.responsible_user")
         .where(`id = ${userId}`);
 
       const user = await userQuery.getRawOne();
-      console.log(user['reps_id']);
       const userPointsQuery = manager
         .createQueryBuilder()
-        .select("SUM(value), count(*)")
+        .select("SUM(value)")
         .from("scores", "")
         .andWhere(`responsible_user = ${user['id']}`);
 
       const userPoints = await userPointsQuery.getRawOne();
 
-      user['userPoints'] = userPoints['sum'] ? userPoints['sum'].toString() : 0;
-      user['userDoneTasks'] = userPoints['count'] ? userPoints['count'].toString() : 0;
-
-
       const repQuery = manager
         .createQueryBuilder()
         .select("name")
         .from("reps", "")
-        // .innerJoin("scores", "", "users.id = scores.user_id");
         .where(`id = ${user['reps_id']}`);
 
       const rep = await repQuery.getRawOne();
-      console.log(rep['name']);
 
-      user['reps_id'] = rep['name'];
+      user['reps_name'] = rep['name'];
+      user['userPoints'] = userPoints['sum'] ? userPoints['sum'].toString() : 0;
       return response.status(200).send(user);
-      // break;
-      // }
+    } catch (error) {
+      return response.status(500).send({
+        error: "Houve um erro na aplicação"
+      });
+    }
+  }
+
+  async getByRep(request: Request, response: Response) {
+    try {
+      const repId = Number(request.params.rep);
+
+      const userQuery = manager
+        .createQueryBuilder()
+        .select("*")
+        .from("users", "")
+        .where(`reps_id = ${repId}`);
+
+      const user = await userQuery.getRawMany();
+
+      return response.status(200).send(user);
     } catch (error) {
       console.error(error);
       return response.status(500).send({
@@ -155,7 +168,7 @@ export class UserController {
         .select("*")
         .from("users", "")
 
-      const results = await usersQuery.getRawMany();
+      var results = await usersQuery.getRawMany();
       return response.status(200).send(results);
     } catch (error) {
       console.error(error);
