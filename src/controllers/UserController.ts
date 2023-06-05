@@ -12,6 +12,7 @@ const manager = getManager();
 export class UserController {
     async create(request: Request, response: Response) {
         try {
+
           const body = request.body;
 
           // Criptografar a senha
