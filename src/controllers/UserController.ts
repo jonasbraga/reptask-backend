@@ -12,12 +12,12 @@ const manager = getManager();
 export class UserController {
     async create(request: Request, response: Response) {
         try {
-          console.log(request);
+
           const body = request.body;
-    
+
           // Criptografar a senha
           const hashedPassword = await bcrypt.hash(body.password, 10);
-    
+
           await manager
             .createQueryBuilder()
             .insert()
@@ -32,12 +32,12 @@ export class UserController {
             })
             .returning("id")
             .execute();
-    
+
           response.status(201).send({
             message: "Usuário cadastrado com sucesso!",
           });
         } catch (error) {
-          console.log(error);
+          console.error(error);
           return response.status(500).send({
             error: "Houve um erro na aplicação"
           });
@@ -68,7 +68,7 @@ export class UserController {
         message: "Usuário editado com sucesso!",
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -97,7 +97,7 @@ export class UserController {
         message: "Usuário excluído com sucesso!",
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -115,7 +115,6 @@ export class UserController {
         .where(`id = ${userId}`);
 
       const user = await userQuery.getRawOne();
-      console.log(user['reps_id']);
       const userPointsQuery = manager
         .createQueryBuilder()
         .select("SUM(value)")
@@ -131,14 +130,11 @@ export class UserController {
         .where(`id = ${user['reps_id']}`);
 
       const rep = await repQuery.getRawOne();
-      console.log(rep['name']);
 
       user['reps_name'] = rep['name'];
       user['userPoints'] = userPoints['sum'] ? userPoints['sum'].toString() : 0;
       return response.status(200).send(user);
     } catch (error) {
-      console.log("error");
-      console.log(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -159,9 +155,7 @@ export class UserController {
 
       return response.status(200).send(user);
     } catch (error) {
-      console.log("error");
-      console.log(error);
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });
@@ -170,20 +164,15 @@ export class UserController {
 
   async getAll(request: Request, response: Response) {
     try {
-
       const usersQuery = manager
         .createQueryBuilder()
         .select("*")
         .from("users", "")
 
       var results = await usersQuery.getRawMany();
-      console.log(results);
       return response.status(200).send(results);
-
     } catch (error) {
-      console.log("error");
-      console.log(error);
-      console.log(error);
+      console.error(error);
       return response.status(500).send({
         error: "Houve um erro na aplicação"
       });

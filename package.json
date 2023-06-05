@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "start": "ts-node-dev --respawn --transpile-only src/server.ts",
     "dev": "nodemon --transpile-only src/server.ts",
     "typeorm": "ts-node-dev node_modules/.bin/typeorm"
   },
