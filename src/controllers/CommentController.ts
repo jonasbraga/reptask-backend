@@ -53,6 +53,7 @@ export class CommentController {
         .select('*')
         .from('comments','')
         .where(`task_id = ${task}`)
+        .innerJoin("users", "", 'users.id = comments.user_id')
         .getRawMany();
 
         return response.status(200).send(comments);
