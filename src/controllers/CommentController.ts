@@ -42,23 +42,21 @@ export class CommentController {
 
         const task = request.params.task;
 
-        if(task){
-            const comments = await manager.createQueryBuilder()
-            .select('*')
-            .from('comments','')
-            .where(`task_id = ${task}`)
-            .getRawMany();
-
-            return response.status(200).send(comments);
-        } else {
-            return response.status(500).send({
-                error: "Houve um erro na aplicação",
-                message: "Erro ao buscar comentários da tarefa",
-              });
+        if(!task){
+          return response.status(400).send({
+            error: "Houve um erro na aplicação",
+            message: "Erro ao buscar comentários da tarefa",
+          });
         }
 
+        const comments = await manager.createQueryBuilder()
+        .select('*')
+        .from('comments','')
+        .where(`task_id = ${task}`)
+        .innerJoin("users", "", 'users.id = comments.user_id')
+        .getRawMany();
 
-
+        return response.status(200).send(comments);
     } catch (error) {
       console.error(error);
       return response.status(500).send({

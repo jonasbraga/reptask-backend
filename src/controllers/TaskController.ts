@@ -171,7 +171,7 @@ export class TaskController {
       .innerJoin("scores", "", 'tasks.id = scores.task_id');
 
       const user = Number(request.params.username);
-      if(user){
+      if (user) {
         tasksQuery.where(`scores.responsible_user = ${user}`);
       }
       const results = await tasksQuery.getRawMany();
