@@ -50,12 +50,12 @@ export class UserController {
         .update("public.users")
         .set({
           name: body.name,
-          email: body.email,
+          // email: body.email,
           nickname: body.nickname,
           password: body.password,
           // photo: body.photo ? body.photo : null,
-          user_type: body.user_type,
-          reps_id: body.reps_id
+          // user_type: body.user_type,
+          // reps_id: body.reps_id
         })
         .where(`id = ${user_id}`)
         .execute();
