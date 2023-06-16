@@ -50,4 +50,52 @@ export class LoginController {
       });
     }
   }
+
+  async changePassword(request: Request, response: Response) {
+    try {
+      // Obter email, senha antiga e nova senha do corpo da solicitação
+      const { oldPassword, newPassword } = request.body;
+      const user_id = request.params.id;
+  
+      // Verificar se o usuário existe
+      const userQuery = manager
+        .createQueryBuilder()
+        .select("*")
+        .from("users", "")
+        .where(`id = '${user_id}'`);
+  
+      const user = await userQuery.getRawOne();
+      if (!user) {
+        return response.status(401).json({ message: "Credenciais inválidas1" });
+      }
+  
+      // Comparar as senhas
+      bcrypt.compare(oldPassword, user.password, async (err, result) => {
+        if (err || !result) {
+          return response
+            .status(401)
+            .json({ message: "Credenciais inválidas2" });
+        }
+  
+        // Gerar o hash da nova senha
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+        // Atualizar a senha no banco de dados
+        const updateQuery = manager
+          .createQueryBuilder()
+          .update("users")
+          .set({ password: hashedPassword })
+          .where(`id = '${user_id}'`);
+  
+        await updateQuery.execute();
+  
+        return response.status(200).json({ message: "Senha alterada com sucesso" });
+      });
+    } catch (error) {
+      console.error(error);
+      return response.status(500).send({
+        error: "Houve um erro na aplicação",
+      });
+    }
+  }
 }

@@ -30,6 +30,7 @@ const authenticateToken = (req, res, next) => {
 
 /////////////// AUTENTICAÇÃO
 routes.post("/login", new LoginController().login);
+routes.post("/change-password/:id", new LoginController().changePassword);
 ///////////////////////////////////////////////////////////////////////
 
 // CRUD COMMENTS
