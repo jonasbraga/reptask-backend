@@ -10,28 +10,28 @@ connect();
 const manager = getManager();
 
 export class UserController {
-  async create(request: Request, response: Response) {
-    try {
-      const body = request.body;
+    async create(request: Request, response: Response) {
+      try {
+        const body = request.body;
 
-      // Criptografar a senha
-      const hashedPassword = await bcrypt.hash(body.password, 10);
+        // Criptografar a senha
+        const hashedPassword = await bcrypt.hash(body.password, 10);
 
-      const user = await manager
-        .createQueryBuilder()
-        .insert()
-        .into("users")
-        .values({
-          name: body.name,
-          email: body.email,
-          nickname: body.nickname,
-          password: hashedPassword, // Salvar a senha criptografada
-          // photo: body.photo ? body.photo : null,
-          user_type: body.user_type,
-          reps_id: body.reps_id
-        })
-        .returning("id")
-        .execute();
+        const user = await manager
+          .createQueryBuilder()
+          .insert()
+          .into("users")
+          .values({
+            name: body.name,
+            email: body.email,
+            nickname: body.nickname,
+            password: hashedPassword, // Salvar a senha criptografada
+            // photo: body.photo ? body.photo : null,
+            user_type: body.user_type,
+            reps_id: body.reps_id
+          })
+          .returning("id")
+          .execute();
 
           response.status(201).send({
             message: "Usuário cadastrado com sucesso!",
@@ -43,7 +43,7 @@ export class UserController {
             error: "Houve um erro na aplicação"
           });
         }
-      }
+    }
 
   async edit(request: Request, response: Response) {
     try {
