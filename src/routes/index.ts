@@ -5,6 +5,7 @@ import { CommentController } from "../controllers/CommentController";
 import { LoginController } from "../controllers/LoginController";
 import { UserController } from "../controllers/UserController";
 import jwt from 'jsonwebtoken';
+import { ItemBonusController } from "../controllers/ItemBonusController";
 
 
 connect();
@@ -55,10 +56,13 @@ routes.route('/users/:id').delete(authenticateToken, new UserController().delete
 routes.route('/users/:id').patch(authenticateToken, new UserController().edit);
 ///////////////////////////////////////////////////////////////////////
 
-routes.route("/users").post(new UserController().create);
-routes.route("/users/:username").get(new UserController().get);
-routes.route("/users-all").get(new UserController().getAll);
-routes.route('/users/:id').patch(new UserController().edit);
-routes.route('/users/:id').delete(new UserController().delete);
+/////////////// CRUD BONUS
+routes.route("/items-all").get(authenticateToken, new ItemBonusController().getAll);
+routes.route("/items/:id").get(authenticateToken, new ItemBonusController().get);
+routes.route("/items").post(authenticateToken, new ItemBonusController().create);
+routes.route('/items/:id').delete(authenticateToken, new ItemBonusController().delete);
+routes.route('/items/:id').patch(authenticateToken, new ItemBonusController().edit);
+///////////////////////////////////////////////////////////////////////
+
 
 export { routes };
