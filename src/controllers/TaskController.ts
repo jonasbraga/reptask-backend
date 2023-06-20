@@ -129,10 +129,10 @@ export class TaskController {
         .createQueryBuilder()
         .select("*")
         .from("tasks", "")
-        .innerJoin("scores", "","tasks.id = scores.task_id");
+        .innerJoin("scores", "", "tasks.id = scores.task_id");
 
       const user = Number(request.params.username);
-      if(user){
+      if (user) {
         taskQuery.where(`scores.responsible_user = ${user}`);
       }
 
@@ -165,10 +165,10 @@ export class TaskController {
   async getAll(request: Request, response: Response) {
     try {
       const tasksQuery = manager
-      .createQueryBuilder()
-      .select("*")
-      .from("tasks", "")
-      .innerJoin("scores", "", 'tasks.id = scores.task_id');
+        .createQueryBuilder()
+        .select("*")
+        .from("tasks", "")
+        .innerJoin("scores", "", 'tasks.id = scores.task_id');
 
       const user = Number(request.params.username);
       if (user) {

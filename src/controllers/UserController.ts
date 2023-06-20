@@ -1,9 +1,9 @@
-import { connect } from "../database/index";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import {
   getManager,
 } from "typeorm";
+import { connect } from "../database/index";
 require("dotenv").config();
 
 connect();
@@ -11,30 +11,31 @@ const manager = getManager();
 
 export class UserController {
     async create(request: Request, response: Response) {
-        try {
+      try {
+        const body = request.body;
 
-          const body = request.body;
+        // Criptografar a senha
+        const hashedPassword = await bcrypt.hash(body.password, 10);
 
-          // Criptografar a senha
-          const hashedPassword = await bcrypt.hash(body.password, 10);
-
-          await manager
-            .createQueryBuilder()
-            .insert()
-            .into("users")
-            .values({
-              name: body.name,
-              email: body.email,
-              nickname: body.nickname,
-              password: hashedPassword, // Salvar a senha criptografada
-              user_type: body.user_type,
-              reps_id: body.reps_id
-            })
-            .returning("id")
-            .execute();
+        const user = await manager
+          .createQueryBuilder()
+          .insert()
+          .into("users")
+          .values({
+            name: body.name,
+            email: body.email,
+            nickname: body.nickname,
+            password: hashedPassword, // Salvar a senha criptografada
+            // photo: body.photo ? body.photo : null,
+            user_type: body.user_type,
+            reps_id: body.reps_id
+          })
+          .returning("id")
+          .execute();
 
           response.status(201).send({
             message: "Usuário cadastrado com sucesso!",
+            user_id: user.raw[0].id,
           });
         } catch (error) {
           console.error(error);
@@ -42,7 +43,7 @@ export class UserController {
             error: "Houve um erro na aplicação"
           });
         }
-      }
+    }
 
   async edit(request: Request, response: Response) {
     try {
@@ -54,12 +55,13 @@ export class UserController {
         .update("public.users")
         .set({
           name: body.name,
-          email: body.email,
+          // email: body.email,
           nickname: body.nickname,
+          // Password will be updated in another route
           // password: body.password,
-          // photo: body.photo ? body.photo : null,
-          user_type: body.user_type,
-          reps_id: body.reps_id
+          photo: body.photo ? body.photo : null,
+          // user_type: body.user_type,
+          // reps_id: body.reps_id
         })
         .where(`id = ${user_id}`)
         .execute();
@@ -169,7 +171,7 @@ export class UserController {
         .select("*")
         .from("users", "")
 
-      var results = await usersQuery.getRawMany();
+      const results = await usersQuery.getRawMany();
       return response.status(200).send(results);
     } catch (error) {
       console.error(error);
