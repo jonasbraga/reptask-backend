@@ -7,6 +7,7 @@ import { UserController } from "../controllers/UserController";
 import jwt from 'jsonwebtoken';
 import { ItemBonusController } from "../controllers/ItemBonusController";
 
+
 connect();
 const routes = Router();
 
@@ -55,7 +56,6 @@ routes.route('/users/:id').delete(authenticateToken, new UserController().delete
 routes.route('/users/:id').patch(authenticateToken, new UserController().edit);
 ///////////////////////////////////////////////////////////////////////
 
-
 /////////////// CRUD BONUS
 routes.route("/items-all").get(authenticateToken, new ItemBonusController().getAll);
 routes.route("/items/:id").get(authenticateToken, new ItemBonusController().get);
@@ -63,5 +63,6 @@ routes.route("/items").post(authenticateToken, new ItemBonusController().create)
 routes.route('/items/:id').delete(authenticateToken, new ItemBonusController().delete);
 routes.route('/items/:id').patch(authenticateToken, new ItemBonusController().edit);
 ///////////////////////////////////////////////////////////////////////
+
 
 export { routes };
