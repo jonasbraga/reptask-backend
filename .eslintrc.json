@@ -1,0 +1,42 @@
+{
+    "$schema": "https://json.schemastore.org/eslintrc",
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "env": {
+        "browser": true,
+        "es6": true,
+        "jest": true,
+        "node": true,
+        "es2022": false
+    },
+    "ignorePatterns": [
+        "dist/*",
+        ".eslintrc.js",
+        ".prettierrc.js",
+        "*.config.js",
+        "esbuild*",
+        "node_modules",
+        "*.min.*",
+        "CHANGELOG.md"
+    ],
+    "plugins": ["@typescript-eslint", "prettier"],
+    "extends": [
+        "eslint:recommended",
+        "standard",
+        "plugin:prettier/recommended",
+        "plugin:unicorn/all",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+        "no-var": "error",
+        "unicorn/filename-case": "off",
+        "unicorn/prevent-abbreviations": "off",
+        "unicorn/prefer-module": "off",
+        "unicorn/no-null": "off",
+        "unicorn/no-abusive-eslint-disable": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/ban-ts-comment": "warn",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-var-requires": "off"
+    }
+}
