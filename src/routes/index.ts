@@ -45,13 +45,6 @@ routes.route('/tasks/:id').delete(authenticateToken, new TaskController().delete
 routes.route('/tasks/:id').patch(authenticateToken, new TaskController().edit);
 ///////////////////////////////////////////////////////////////////////
 
-/// //////////// CRUD TASKS
-routes.route('/tasks-all/:username?').get(authenticateToken, new TaskController().getAll)
-routes.route('/tasks/:option/:username?').get(authenticateToken, new TaskController().get)
-routes.route('/tasks').post(authenticateToken, new TaskController().create)
-routes.route('/tasks/:id').delete(authenticateToken, new TaskController().delete)
-routes.route('/tasks/:id').patch(authenticateToken, new TaskController().edit)
-/// ////////////////////////////////////////////////////////////////////
 
 /// //////////// CRUD USERS
 routes.route('/users-all').get(authenticateToken, new UserController().getAll)
