@@ -39,8 +39,8 @@ routes.route('/comments').post(authenticateToken, new CommentController().create
 routes.route('/comments/:task').get(authenticateToken, new CommentController().get);
 
 /////////////// CRUD TASKS
-routes.route("/tasks-all/:username?").get(authenticateToken, new TaskController().getAll);
-routes.route("/tasks/:option/:username?").get(authenticateToken, new TaskController().get);
+routes.route("/tasks-all/:rep/:username?").get(authenticateToken, new TaskController().getAll);
+routes.route("/tasks/:option/:rep/:username?").get(authenticateToken, new TaskController().get);
 routes.route("/tasks").post(authenticateToken, new TaskController().create);
 routes.route('/tasks/:id').delete(authenticateToken, new TaskController().delete);
 routes.route('/tasks/:id').patch(authenticateToken, new TaskController().edit);
