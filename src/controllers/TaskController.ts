@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { getManager } from 'typeorm'
+import { UpdateResult, getManager } from 'typeorm'
 import { connect } from '../database/index'
 require('dotenv').config()
 
@@ -53,7 +53,7 @@ export class TaskController {
       const body = request.body
       const taskId = request.params.id
 
-      const updateQueries = []
+      const updateQueries: Promise<UpdateResult>[] = []
 
       updateQueries.push(
         manager
@@ -85,7 +85,7 @@ export class TaskController {
 
       await Promise.all(updateQueries)
 
-      response.status(200).send({
+      return response.status(200).send({
         message: 'Tarefa editada com sucesso!',
       })
     } catch (error) {
