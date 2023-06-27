@@ -6,7 +6,7 @@ export async function connect () {
     name: 'default',
     type: 'postgres',
     host: process.env.DATABASE_IP,
-    port: Number.parseInt(process.env.DATABASE_PORT),
+    port: Number.parseInt(process.env.DATABASE_PORT!),
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASS,
     database: process.env.DATABASE_NAME,
