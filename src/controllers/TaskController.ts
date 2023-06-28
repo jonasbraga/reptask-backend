@@ -127,7 +127,6 @@ export class TaskController {
       if (user) {
         taskQuery.where(`scores.responsible_user = ${user}`)
       }
-
       switch (option) {
         // somente pendentes
         case 0: {

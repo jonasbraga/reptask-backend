@@ -17,10 +17,16 @@ export class LoginController {
       // Verificar se o usuário existe
       const userQuery = manager
         .createQueryBuilder()
-        .select('*')
+        .select(
+          'users.*, reps.name as rep_name, SUM(CASE WHEN scores.finished = true THEN scores.value ELSE 0 END) as punctuation, SUM(CASE WHEN scores.finished = true THEN 1 ELSE 0 END) as finished_tasks'
+        )
         .from('users', '')
-        // .innerJoin("scores", "", "users.id = scores.responsible_user")
+        .innerJoin('scores', '', 'users.id = scores.responsible_user')
+        .leftJoin('tasks', '', 'tasks.id = scores.task_id')
+        .leftJoin('reps', '', 'reps.id = users.reps_id')
         .where(`email = '${email}'`)
+        .groupBy('users.id')
+        .addGroupBy('reps.name')
 
       const user = await userQuery.getRawOne()
       if (!user) {
@@ -39,7 +45,7 @@ export class LoginController {
         })
 
         // Retornar o token como resposta
-        return response.json({ token })
+        return response.json({ token, user })
       })
     } catch (error) {
       console.error(error)
