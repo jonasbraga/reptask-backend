@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS public.comments
   CONSTRAINT users_id_fkey FOREIGN KEY (user_id)
       REFERENCES public.users (id) MATCH SIMPLE
       ON UPDATE NO ACTION
-      ON DELETE NO ACTION
+      ON DELETE SET NULL
 );
 
 -- Create the scores table
@@ -80,5 +80,5 @@ CREATE TABLE IF NOT EXISTS public.scores
   CONSTRAINT users_id_fkey FOREIGN KEY (responsible_user)
       REFERENCES public.users (id) MATCH SIMPLE
       ON UPDATE NO ACTION
-      ON DELETE NO ACTION
+      ON DELETE SET NULL
 );
