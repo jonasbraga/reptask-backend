@@ -17,6 +17,7 @@
     "express": "^4.17.2",
     "jsonwebtoken": "^9.0.0",
     "moment-timezone": "^0.5.39",
+    "nodemailer": "^6.9.3",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.41",
