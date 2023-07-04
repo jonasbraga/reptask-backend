@@ -8,8 +8,8 @@ require('dotenv').config()
 connect()
 const manager = getManager()
 
-export class LoginController {
-  async login (request: Request, response: Response) {
+export abstract class LoginController {
+  static async login (request: Request, response: Response) {
     try {
       // Obter email e senha do corpo da solicitação
       const { email, password } = request.body
@@ -55,7 +55,7 @@ export class LoginController {
     }
   }
 
-  async changePassword (request: Request, response: Response) {
+  static async changePassword (request: Request, response: Response) {
     try {
       // Obter email, senha antiga e nova senha do corpo da solicitação
       const { oldPassword, newPassword } = request.body

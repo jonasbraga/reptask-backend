@@ -6,8 +6,8 @@ require('dotenv').config()
 connect()
 const manager = getManager()
 
-export class TaskController {
-  async create (request: Request, response: Response) {
+export abstract class TaskController {
+  static async create (request: Request, response: Response) {
     try {
       const body = request.body
 
@@ -48,7 +48,7 @@ export class TaskController {
     }
   }
 
-  async edit (request: Request, response: Response) {
+  static async edit (request: Request, response: Response) {
     try {
       const body = request.body
       const taskId = request.params.id
@@ -96,7 +96,7 @@ export class TaskController {
     }
   }
 
-  async delete (request: Request, response: Response) {
+  static async delete (request: Request, response: Response) {
     try {
       const taskId = request.params.id
       await manager.createQueryBuilder().delete().from('public.scores').where(`task_id = ${taskId}`).execute()
@@ -113,7 +113,7 @@ export class TaskController {
     }
   }
 
-  async get (request: Request, response: Response) {
+  static async get (request: Request, response: Response) {
     try {
       const option = Number(request.params.option)
 
@@ -155,7 +155,7 @@ export class TaskController {
     }
   }
 
-  async getAll (request: Request, response: Response) {
+  static async getAll (request: Request, response: Response) {
     try {
       const tasksQuery = manager
         .createQueryBuilder()

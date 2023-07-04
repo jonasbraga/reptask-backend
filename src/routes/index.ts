@@ -29,37 +29,37 @@ const authenticateToken = (req, res, next) => {
 }
 
 /// //////////// AUTENTICAÇÃO
-routes.post('/login', new LoginController().login)
-routes.post('/change-password/:id', new LoginController().changePassword)
+routes.post('/login', LoginController.login)
+routes.post('/change-password/:id', LoginController.changePassword)
 /// ////////////////////////////////////////////////////////////////////
 
 // CRUD COMMENTS
-routes.route('/comments').post(authenticateToken, new CommentController().create)
-routes.route('/comments/:task').get(authenticateToken, new CommentController().get)
+routes.route('/comments').post(authenticateToken, CommentController.create)
+routes.route('/comments/:task').get(authenticateToken, CommentController.get)
 
 /// //////////// CRUD TASKS
-routes.route('/tasks-all/:rep/:username?').get(authenticateToken, new TaskController().getAll)
-routes.route('/tasks/:option/:rep/:username?').get(authenticateToken, new TaskController().get)
-routes.route('/tasks').post(authenticateToken, new TaskController().create)
-routes.route('/tasks/:id').delete(authenticateToken, new TaskController().delete)
-routes.route('/tasks/:id').patch(authenticateToken, new TaskController().edit)
+routes.route('/tasks-all/:rep/:username?').get(authenticateToken, TaskController.getAll)
+routes.route('/tasks/:option/:rep/:username?').get(authenticateToken, TaskController.get)
+routes.route('/tasks').post(authenticateToken, TaskController.create)
+routes.route('/tasks/:id').delete(authenticateToken, TaskController.delete)
+routes.route('/tasks/:id').patch(authenticateToken, TaskController.edit)
 /// ////////////////////////////////////////////////////////////////////
 
 /// //////////// CRUD USERS
-routes.route('/users-all').get(authenticateToken, new UserController().getAll)
-routes.route('/users-by-rep/:rep').get(authenticateToken, new UserController().getByRep)
-routes.route('/users/:username').get(authenticateToken, new UserController().get)
-routes.route('/users').post(authenticateToken, new UserController().create)
-routes.route('/users/:id').delete(authenticateToken, new UserController().delete)
-routes.route('/users/:id').patch(authenticateToken, new UserController().edit)
+routes.route('/users-all').get(authenticateToken, UserController.getAll)
+routes.route('/users-by-rep/:rep').get(authenticateToken, UserController.getByRep)
+routes.route('/users/:username').get(authenticateToken, UserController.get)
+routes.route('/users').post(authenticateToken, UserController.create)
+routes.route('/users/:id').delete(authenticateToken, UserController.delete)
+routes.route('/users/:id').patch(authenticateToken, UserController.edit)
 /// ////////////////////////////////////////////////////////////////////
 
 /// //////////// CRUD BONUS
-routes.route('/items-all').get(authenticateToken, new ItemBonusController().getAll)
-routes.route('/items/:id').get(authenticateToken, new ItemBonusController().get)
-routes.route('/items').post(authenticateToken, new ItemBonusController().create)
-routes.route('/items/:id').delete(authenticateToken, new ItemBonusController().delete)
-routes.route('/items/:id').patch(authenticateToken, new ItemBonusController().edit)
+routes.route('/items-all').get(authenticateToken, ItemBonusController.getAll)
+routes.route('/items/:id').get(authenticateToken, ItemBonusController.get)
+routes.route('/items').post(authenticateToken, ItemBonusController.create)
+routes.route('/items/:id').delete(authenticateToken, ItemBonusController.delete)
+routes.route('/items/:id').patch(authenticateToken, ItemBonusController.edit)
 /// ////////////////////////////////////////////////////////////////////
 
 export { routes }

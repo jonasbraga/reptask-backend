@@ -31,6 +31,7 @@
     "unicorn/no-null": "off",
     "unicorn/no-keyword-prefix": "off",
     "unicorn/no-abusive-eslint-disable": "off",
+    "unicorn/no-static-only-class": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/no-non-null-assertion": "off",
