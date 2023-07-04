@@ -1,10 +1,8 @@
-import { Request, Response } from "express";
-import {
-  getManager
-} from "typeorm";
-import { connect } from "../database/index";
-import { NotificationEmail } from "../Services/NotificationEmail";
-require("dotenv").config();
+import { Request, Response } from 'express'
+import { getManager } from 'typeorm'
+import { connect } from '../database/index'
+import { NotificationEmail } from '../Services/NotificationEmail'
+require('dotenv').config()
 
 connect()
 const manager = getManager()
@@ -27,16 +25,20 @@ export class CommentController {
 
       if (comment) {
         const user = await manager
-        .createQueryBuilder()
-        .select("*")
-        .from("users", "")
-        .innerJoin("scores", "", "users.id = scores.responsible_user")
-        .innerJoin("tasks", "", "tasks.id = scores.task_id")
-        .where(`scores.task_id = ${body.task_id}`)
-        .execute();
-        if(user){
+          .createQueryBuilder()
+          .select('*')
+          .from('users', '')
+          .innerJoin('scores', '', 'users.id = scores.responsible_user')
+          .innerJoin('tasks', '', 'tasks.id = scores.task_id')
+          .where(`scores.task_id = ${body.task_id}`)
+          .execute()
+        if (user) {
           console.log(user)
-          await new NotificationEmail().sendEmail(user[0].email, "Novo comentário em sua atividade na RepTask!", "Olá "+ user[0].name + " Um novo comentário foi publicado em sua atividade "+user[0].title);
+          await new NotificationEmail().sendEmail(
+            user[0].email,
+            'Novo comentário em sua atividade na RepTask!',
+            'Olá ' + user[0].name + ' Um novo comentário foi publicado em sua atividade ' + user[0].title
+          )
         }
         return response.status(200).send({
           message: 'Comentário cadastrado com sucesso!',

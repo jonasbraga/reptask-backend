@@ -1,11 +1,9 @@
-import { Request, Response } from "express";
-import bcrypt from "bcrypt";
-import {
-  getManager,
-} from "typeorm";
-import { connect } from "../database/index";
-import { NotificationEmail } from "../Services/NotificationEmail";
-require("dotenv").config();
+import { Request, Response } from 'express'
+import bcrypt from 'bcrypt'
+import { getManager } from 'typeorm'
+import { connect } from '../database/index'
+import { NotificationEmail } from '../Services/NotificationEmail'
+require('dotenv').config()
 
 connect()
 const manager = getManager()
@@ -33,14 +31,18 @@ export class UserController {
         })
         .returning('id')
         .execute()
-        if(user){
-          await new NotificationEmail().sendEmail(body.email, "Criação de conta na RepTask", "Olá "+ body.name + " bem vindo a repTask! sua conta foi criado com sucesso");
-        }
+      if (user) {
+        await new NotificationEmail().sendEmail(
+          body.email,
+          'Criação de conta na RepTask',
+          'Olá ' + body.name + ' bem vindo a repTask! sua conta foi criado com sucesso'
+        )
+      }
       response.status(201).send({
         message: 'Usuário cadastrado com sucesso!',
         user_id: user.raw[0].id,
       })
-    } catch (error) {
+    } catch {
       return response.status(500).send({
         error: 'Houve um erro na aplicação',
       })
