@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { UpdateResult, getManager } from 'typeorm'
 import { connect } from '../database/index'
+import { NotificationEmail } from '../Services/NotificationEmail'
 require('dotenv').config()
 
 connect()
@@ -35,6 +36,20 @@ export class TaskController {
             finished: body.score.finished,
           })
           .execute()
+        const user = await manager
+          .createQueryBuilder()
+          .select('*')
+          .from('users', '')
+          .where(`users.id = ${body.score.responsible_user}`)
+          .execute()
+        console.log(user)
+        if (user) {
+          await new NotificationEmail().sendEmail(
+            user[0].email,
+            'Nova tarefa cadastrada na RepTask!',
+            'Olá ' + user[0].name + ', a tarefa ' + body.title + ' foi cadastrada em sua república e atribuida a você'
+          )
+        }
       }
 
       response.status(200).send({
@@ -83,7 +98,25 @@ export class TaskController {
         )
       }
 
-      await Promise.all(updateQueries)
+      await Promise.all(updateQueries).then(async () => {
+        const user = await manager
+          .createQueryBuilder()
+          .select('*')
+          .from('users', '')
+          .where(`users.id = ${body.score.responsible_user}`)
+          .execute()
+        if (user) {
+          await new NotificationEmail().sendEmail(
+            user[0].email,
+            'Atualização em sua tarefa na RepTask!',
+            'Olá ' +
+              user[0].name +
+              ', a tarefa ' +
+              body.title +
+              ', atribuída a você, teve atualizações. Entre em sua república e confira'
+          )
+        }
+      })
 
       return response.status(200).send({
         message: 'Tarefa editada com sucesso!',
