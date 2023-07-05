@@ -21,7 +21,7 @@ export abstract class LoginController {
           'users.*, reps.name as rep_name, SUM(CASE WHEN scores.finished = true THEN scores.value ELSE 0 END) as punctuation, SUM(CASE WHEN scores.finished = true THEN 1 ELSE 0 END) as finished_tasks'
         )
         .from('users', '')
-        .innerJoin('scores', '', 'users.id = scores.responsible_user')
+        .leftJoin('scores', '', 'users.id = scores.responsible_user')
         .leftJoin('tasks', '', 'tasks.id = scores.task_id')
         .leftJoin('reps', '', 'reps.id = users.reps_id')
         .where(`email = '${email}'`)
