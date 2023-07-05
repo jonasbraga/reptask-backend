@@ -7,8 +7,8 @@ require('dotenv').config()
 connect()
 const manager = getManager()
 
-export class CommentController {
-  async create (request: Request, response: Response) {
+export abstract class CommentController {
+  static async create (request: Request, response: Response) {
     try {
       const body = request.body
 
@@ -52,7 +52,7 @@ export class CommentController {
     }
   }
 
-  async get (request: Request, response: Response) {
+  static async get (request: Request, response: Response) {
     try {
       const task = request.params.task
 
