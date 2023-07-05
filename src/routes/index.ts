@@ -1,11 +1,12 @@
+import jwt from 'jsonwebtoken'
 import { Router } from 'express'
 import { connect } from '../database/index'
 import { TaskController } from '../controllers/TaskController'
 import { CommentController } from '../controllers/CommentController'
 import { LoginController } from '../controllers/LoginController'
 import { UserController } from '../controllers/UserController'
-import jwt from 'jsonwebtoken'
 import { ItemBonusController } from '../controllers/ItemBonusController'
+import { AdminController } from '../controllers/AdminController'
 
 connect()
 const routes = Router()
@@ -60,6 +61,10 @@ routes.route('/items/:id').get(authenticateToken, ItemBonusController.get)
 routes.route('/items').post(authenticateToken, ItemBonusController.create)
 routes.route('/items/:id').delete(authenticateToken, ItemBonusController.delete)
 routes.route('/items/:id').patch(authenticateToken, ItemBonusController.edit)
+/// ////////////////////////////////////////////////////////////////////
+
+/// //////////// ADMIN ROUTES
+routes.route('/admin').post(AdminController.create)
 /// ////////////////////////////////////////////////////////////////////
 
 export { routes }
