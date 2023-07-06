@@ -114,4 +114,29 @@ export abstract class ItemBonusController {
       })
     }
   }
+
+  static async buy (request: Request, response: Response) {
+    try {
+      const body = request.body
+
+      await manager
+        .createQueryBuilder()
+        .insert()
+        .into('historic')
+        .values({
+          user_id: body.user_id,
+          item_id: body.item_id,
+        })
+        .execute()
+
+      response.status(200).send({
+        message: 'Item bônus resgatado com sucesso!',
+      })
+    } catch (error) {
+      console.error(error)
+      return response.status(500).send({
+        error: 'Houve um erro na aplicação',
+      })
+    }
+  }
 }

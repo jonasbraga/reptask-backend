@@ -61,7 +61,7 @@ routes.route('/items/:id').get(authenticateToken, ItemBonusController.get)
 routes.route('/items').post(authenticateToken, ItemBonusController.create)
 routes.route('/items/:id').delete(authenticateToken, ItemBonusController.delete)
 routes.route('/items/:id').patch(authenticateToken, ItemBonusController.edit)
-/// ////////////////////////////////////////////////////////////////////
+routes.route('/items/buy').post(authenticateToken, ItemBonusController.buy)
 
 /// //////////// ADMIN ROUTES
 routes.route('/admin').post(AdminController.create)
