@@ -8,8 +8,8 @@ require('dotenv').config()
 connect()
 const manager = getManager()
 
-export class LoginController {
-  async login (request: Request, response: Response) {
+export abstract class LoginController {
+  static async login (request: Request, response: Response) {
     try {
       // Obter email e senha do corpo da solicitação
       const { email, password } = request.body
@@ -21,7 +21,7 @@ export class LoginController {
           'users.*, reps.name as rep_name, SUM(CASE WHEN scores.finished = true THEN scores.value ELSE 0 END) as punctuation, SUM(CASE WHEN scores.finished = true THEN 1 ELSE 0 END) as finished_tasks'
         )
         .from('users', '')
-        .innerJoin('scores', '', 'users.id = scores.responsible_user')
+        .leftJoin('scores', '', 'users.id = scores.responsible_user')
         .leftJoin('tasks', '', 'tasks.id = scores.task_id')
         .leftJoin('reps', '', 'reps.id = users.reps_id')
         .where(`email = '${email}'`)
@@ -55,7 +55,7 @@ export class LoginController {
     }
   }
 
-  async changePassword (request: Request, response: Response) {
+  static async changePassword (request: Request, response: Response) {
     try {
       // Obter email, senha antiga e nova senha do corpo da solicitação
       const { oldPassword, newPassword } = request.body

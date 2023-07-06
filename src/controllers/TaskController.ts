@@ -1,13 +1,14 @@
 import { Request, Response } from 'express'
 import { UpdateResult, getManager } from 'typeorm'
 import { connect } from '../database/index'
+import { NotificationEmail } from '../Services/NotificationEmail'
 require('dotenv').config()
 
 connect()
 const manager = getManager()
 
-export class TaskController {
-  async create (request: Request, response: Response) {
+export abstract class TaskController {
+  static async create (request: Request, response: Response) {
     try {
       const body = request.body
 
@@ -35,6 +36,20 @@ export class TaskController {
             finished: body.score.finished,
           })
           .execute()
+        const user = await manager
+          .createQueryBuilder()
+          .select('*')
+          .from('users', '')
+          .where(`users.id = ${body.score.responsible_user}`)
+          .execute()
+        console.log(user)
+        if (user) {
+          await new NotificationEmail().sendEmail(
+            user[0].email,
+            'Nova tarefa cadastrada na RepTask!',
+            'Olá ' + user[0].name + ', a tarefa ' + body.title + ' foi cadastrada em sua república e atribuida a você'
+          )
+        }
       }
 
       response.status(200).send({
@@ -48,7 +63,7 @@ export class TaskController {
     }
   }
 
-  async edit (request: Request, response: Response) {
+  static async edit (request: Request, response: Response) {
     try {
       const body = request.body
       const taskId = request.params.id
@@ -83,7 +98,25 @@ export class TaskController {
         )
       }
 
-      await Promise.all(updateQueries)
+      await Promise.all(updateQueries).then(async () => {
+        const user = await manager
+          .createQueryBuilder()
+          .select('*')
+          .from('users', '')
+          .where(`users.id = ${body.score.responsible_user}`)
+          .execute()
+        if (user) {
+          await new NotificationEmail().sendEmail(
+            user[0].email,
+            'Atualização em sua tarefa na RepTask!',
+            'Olá ' +
+              user[0].name +
+              ', a tarefa ' +
+              body.title +
+              ', atribuída a você, teve atualizações. Entre em sua república e confira'
+          )
+        }
+      })
 
       return response.status(200).send({
         message: 'Tarefa editada com sucesso!',
@@ -96,7 +129,7 @@ export class TaskController {
     }
   }
 
-  async delete (request: Request, response: Response) {
+  static async delete (request: Request, response: Response) {
     try {
       const taskId = request.params.id
       await manager.createQueryBuilder().delete().from('public.scores').where(`task_id = ${taskId}`).execute()
@@ -113,7 +146,7 @@ export class TaskController {
     }
   }
 
-  async get (request: Request, response: Response) {
+  static async get (request: Request, response: Response) {
     try {
       const option = Number(request.params.option)
 
@@ -155,7 +188,7 @@ export class TaskController {
     }
   }
 
-  async getAll (request: Request, response: Response) {
+  static async getAll (request: Request, response: Response) {
     try {
       const tasksQuery = manager
         .createQueryBuilder()

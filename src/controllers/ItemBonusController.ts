@@ -6,8 +6,8 @@ require('dotenv').config()
 connect()
 const manager = getManager()
 
-export class ItemBonusController {
-  async create (request: Request, response: Response) {
+export abstract class ItemBonusController {
+  static async create (request: Request, response: Response) {
     try {
       const body = request.body
 
@@ -33,7 +33,7 @@ export class ItemBonusController {
     }
   }
 
-  async edit (request: Request, response: Response) {
+  static async edit (request: Request, response: Response) {
     try {
       const body = request.body
       const itemId = request.params.id
@@ -59,7 +59,7 @@ export class ItemBonusController {
     }
   }
 
-  async delete (request: Request, response: Response) {
+  static async delete (request: Request, response: Response) {
     try {
       const itemId = request.params.id
       await manager.createQueryBuilder().delete().from('public.item_bonus').where(`id = ${itemId}`).execute()
@@ -75,7 +75,7 @@ export class ItemBonusController {
     }
   }
 
-  async get (request: Request, response: Response) {
+  static async get (request: Request, response: Response) {
     try {
       const item = request.params.id
 
@@ -102,7 +102,7 @@ export class ItemBonusController {
     }
   }
 
-  async getAll (request: Request, response: Response) {
+  static async getAll (request: Request, response: Response) {
     try {
       const results = await manager.createQueryBuilder().select('*').from('item_bonus', '').getRawMany()
 

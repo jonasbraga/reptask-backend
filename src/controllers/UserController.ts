@@ -2,13 +2,14 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import { getManager } from 'typeorm'
 import { connect } from '../database/index'
+import { NotificationEmail } from '../Services/NotificationEmail'
 require('dotenv').config()
 
 connect()
 const manager = getManager()
 
-export class UserController {
-  async create (request: Request, response: Response) {
+export abstract class UserController {
+  static async create (request: Request, response: Response) {
     try {
       const body = request.body
 
@@ -30,20 +31,25 @@ export class UserController {
         })
         .returning('id')
         .execute()
-
+      if (user) {
+        await new NotificationEmail().sendEmail(
+          body.email,
+          'Criação de conta na RepTask',
+          'Olá ' + body.name + ' bem vindo a repTask! sua conta foi criado com sucesso'
+        )
+      }
       response.status(201).send({
         message: 'Usuário cadastrado com sucesso!',
         user_id: user.raw[0].id,
       })
-    } catch (error) {
-      console.error(error)
+    } catch {
       return response.status(500).send({
         error: 'Houve um erro na aplicação',
       })
     }
   }
 
-  async edit (request: Request, response: Response) {
+  static async edit (request: Request, response: Response) {
     try {
       const body = request.body
       const userId = request.params.id
@@ -75,7 +81,7 @@ export class UserController {
     }
   }
 
-  async delete (request: Request, response: Response) {
+  static async delete (request: Request, response: Response) {
     try {
       const userId = request.params.id
 
@@ -94,7 +100,7 @@ export class UserController {
     }
   }
 
-  async get (request: Request, response: Response) {
+  static async get (request: Request, response: Response) {
     try {
       const userId = Number(request.params.username)
 
@@ -123,7 +129,7 @@ export class UserController {
     }
   }
 
-  async getByRep (request: Request, response: Response) {
+  static async getByRep (request: Request, response: Response) {
     try {
       const repId = Number(request.params.rep)
 
@@ -140,7 +146,7 @@ export class UserController {
     }
   }
 
-  async getAll (request: Request, response: Response) {
+  static async getAll (request: Request, response: Response) {
     try {
       const usersQuery = manager.createQueryBuilder().select('*').from('users', '')
 

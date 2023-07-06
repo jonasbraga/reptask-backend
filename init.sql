@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.item_bonus
 (
   id serial NOT NULL,
   title character varying(60) COLLATE pg_catalog."default" NOT NULL,
-  description text COLLATE pg_catalog."default",
+  value integer NOT NULL,
   CONSTRAINT item_bonus_pkey PRIMARY KEY (id)
 );
 
