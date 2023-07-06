@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS public.users
   nickname character varying(45) COLLATE pg_catalog."default" NOT NULL,
   password character varying(100) COLLATE pg_catalog."default" NOT NULL,
   photo text COLLATE pg_catalog."default",
+  punctuation integer DEFAULT 0,
   user_type integer NOT NULL,
   reps_id integer NOT NULL,
   CONSTRAINT users_pkey PRIMARY KEY (id),
@@ -82,3 +83,60 @@ CREATE TABLE IF NOT EXISTS public.scores
       ON UPDATE NO ACTION
       ON DELETE SET NULL
 );
+
+-- Create the historic table
+CREATE TABLE IF NOT EXISTS public.historic
+(
+  user_id integer NOT NULL,
+  item_id integer NOT NULL,
+  CONSTRAINT user_id_fkey FOREIGN KEY (user_id)
+      REFERENCES public.users (id) MATCH SIMPLE
+      ON UPDATE NO ACTION
+      ON DELETE NO ACTION,
+  CONSTRAINT item_id_fkey FOREIGN KEY (item_id)
+      REFERENCES public.item_bonus (id) MATCH SIMPLE
+      ON UPDATE NO ACTION
+      ON DELETE SET NULL
+);
+
+-- função de trigger para alteração de finalização de tarefas
+CREATE OR REPLACE FUNCTION update_user_punctuation()
+  RETURNS TRIGGER AS $$
+  BEGIN
+    IF NEW.finished = true THEN
+      UPDATE public.users
+      SET punctuation = punctuation + (SELECT value FROM public.scores WHERE task_id = NEW.task_id)
+      WHERE id = NEW.responsible_user;
+    ELSE
+      UPDATE public.users
+      SET punctuation = punctuation - (SELECT value FROM public.scores WHERE task_id = NEW.task_id)
+      WHERE id = NEW.responsible_user;
+    END IF;
+    RETURN NEW;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- trigger para alteração de status de tarefas
+CREATE TRIGGER scores_finished_trigger
+AFTER UPDATE ON public.scores
+FOR EACH ROW
+EXECUTE FUNCTION update_user_punctuation();
+
+-- função de trigger para resgate de items bonus
+CREATE OR REPLACE FUNCTION update_user_punctuation_on_historic()
+  RETURNS TRIGGER AS $$
+  BEGIN
+    UPDATE public.users
+    SET punctuation = punctuation - (SELECT value FROM public.item_bonus WHERE id = NEW.item_id)
+    WHERE id = NEW.user_id;
+    
+    RETURN NEW;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- trigger para resgate de items bonus
+CREATE TRIGGER historic_insert_trigger
+AFTER INSERT ON public.historic
+FOR EACH ROW
+EXECUTE FUNCTION update_user_punctuation_on_historic();
+

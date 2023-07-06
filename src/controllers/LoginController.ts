@@ -18,7 +18,7 @@ export abstract class LoginController {
       const userQuery = manager
         .createQueryBuilder()
         .select(
-          'users.*, reps.name as rep_name, SUM(CASE WHEN scores.finished = true THEN scores.value ELSE 0 END) as punctuation, SUM(CASE WHEN scores.finished = true THEN 1 ELSE 0 END) as finished_tasks'
+          'users.*, reps.name as rep_name, SUM(CASE WHEN scores.finished = true THEN 1 ELSE 0 END) as finished_tasks'
         )
         .from('users', '')
         .leftJoin('scores', '', 'users.id = scores.responsible_user')
