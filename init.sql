@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS public.users
   nickname character varying(45) COLLATE pg_catalog."default" NOT NULL,
   password character varying(100) COLLATE pg_catalog."default" NOT NULL,
   photo text COLLATE pg_catalog."default",
-  balance integer DEFAULT 0,
+  punctuation integer DEFAULT 0,
   user_type integer NOT NULL,
   reps_id integer NOT NULL,
   CONSTRAINT users_pkey PRIMARY KEY (id),
@@ -100,16 +100,16 @@ CREATE TABLE IF NOT EXISTS public.historic
 );
 
 -- função de trigger para alteração de finalização de tarefas
-CREATE OR REPLACE FUNCTION update_user_balance()
+CREATE OR REPLACE FUNCTION update_user_punctuation()
   RETURNS TRIGGER AS $$
   BEGIN
     IF NEW.finished = true THEN
       UPDATE public.users
-      SET balance = balance + (SELECT value FROM public.scores WHERE task_id = NEW.task_id)
+      SET punctuation = punctuation + (SELECT value FROM public.scores WHERE task_id = NEW.task_id)
       WHERE id = NEW.responsible_user;
     ELSE
       UPDATE public.users
-      SET balance = balance - (SELECT value FROM public.scores WHERE task_id = NEW.task_id)
+      SET punctuation = punctuation - (SELECT value FROM public.scores WHERE task_id = NEW.task_id)
       WHERE id = NEW.responsible_user;
     END IF;
     RETURN NEW;
@@ -120,14 +120,14 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER scores_finished_trigger
 AFTER UPDATE ON public.scores
 FOR EACH ROW
-EXECUTE FUNCTION update_user_balance();
+EXECUTE FUNCTION update_user_punctuation();
 
 -- função de trigger para resgate de items bonus
-CREATE OR REPLACE FUNCTION update_user_balance_on_historic()
+CREATE OR REPLACE FUNCTION update_user_punctuation_on_historic()
   RETURNS TRIGGER AS $$
   BEGIN
     UPDATE public.users
-    SET balance = balance - (SELECT value FROM public.item_bonus WHERE id = NEW.item_id)
+    SET punctuation = punctuation - (SELECT value FROM public.item_bonus WHERE id = NEW.item_id)
     WHERE id = NEW.user_id;
     
     RETURN NEW;
@@ -138,5 +138,5 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER historic_insert_trigger
 AFTER INSERT ON public.historic
 FOR EACH ROW
-EXECUTE FUNCTION update_user_balance_on_historic();
+EXECUTE FUNCTION update_user_punctuation_on_historic();
 
