@@ -115,7 +115,7 @@ export abstract class ItemBonusController {
     }
   }
 
-  async buy (request: Request, response: Response) {
+  static async buy (request: Request, response: Response) {
     try {
       const body = request.body
 
