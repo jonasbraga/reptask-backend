@@ -60,6 +60,7 @@ routes.route('/items/:id').get(authenticateToken, new ItemBonusController().get)
 routes.route('/items').post(authenticateToken, new ItemBonusController().create)
 routes.route('/items/:id').delete(authenticateToken, new ItemBonusController().delete)
 routes.route('/items/:id').patch(authenticateToken, new ItemBonusController().edit)
+routes.route('/items/buy').post(authenticateToken, new ItemBonusController().buy)
 /// ////////////////////////////////////////////////////////////////////
 
 export { routes }
