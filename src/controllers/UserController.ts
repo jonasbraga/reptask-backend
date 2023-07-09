@@ -133,7 +133,18 @@ export abstract class UserController {
     try {
       const repId = Number(request.params.rep)
 
-      const userQuery = manager.createQueryBuilder().select('*').from('users', '').where(`reps_id = ${repId}`)
+      const userQuery = manager
+        .createQueryBuilder()
+        .select(
+          'users.*, reps.name as rep_name, SUM(CASE WHEN scores.finished = true THEN 1 ELSE 0 END) as finished_tasks'
+        )
+        .from('users', '')
+        .leftJoin('scores', '', 'users.id = scores.responsible_user')
+        .leftJoin('tasks', '', 'tasks.id = scores.task_id')
+        .leftJoin('reps', '', 'reps.id = users.reps_id')
+        .where(`reps_id = ${repId}`)
+        .groupBy('users.id')
+        .addGroupBy('reps.name')
 
       const user = await userQuery.getRawMany()
 

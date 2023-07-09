@@ -155,6 +155,7 @@ export abstract class TaskController {
         .select('*')
         .from('tasks', '')
         .innerJoin('scores', '', 'tasks.id = scores.task_id')
+        .innerJoin('users', '', 'scores.responsible_user = users.id')
 
       const user = Number(request.params.username)
       if (user) {

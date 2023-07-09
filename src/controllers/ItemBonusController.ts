@@ -10,14 +10,13 @@ export abstract class ItemBonusController {
   static async create (request: Request, response: Response) {
     try {
       const body = request.body
-
       await manager
         .createQueryBuilder()
         .insert()
         .into('item_bonus')
         .values({
           title: body.title,
-          description: body.description || null,
+          value: body.value || null,
         })
         .returning('id')
         .execute()
@@ -37,7 +36,6 @@ export abstract class ItemBonusController {
     try {
       const body = request.body
       const itemId = request.params.id
-
       await manager
         .createQueryBuilder()
         .update('public.item_bonus')
