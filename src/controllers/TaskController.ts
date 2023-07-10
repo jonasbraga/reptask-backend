@@ -42,7 +42,6 @@ export abstract class TaskController {
           .from('users', '')
           .where(`users.id = ${body.score.responsible_user}`)
           .execute()
-        console.log(user)
         if (user) {
           await new NotificationEmail().sendEmail(
             user[0].email,
@@ -54,6 +53,7 @@ export abstract class TaskController {
 
       response.status(200).send({
         message: 'Tarefa cadastrada com sucesso!',
+        taskId: task.raw[0].id,
       })
     } catch (error) {
       console.error(error)

@@ -51,6 +51,7 @@ export abstract class AdminController {
       response.status(201).send({
         message: 'Admin cadastrado com sucesso!',
         admin_id: adminResult.raw[0].id,
+        reps_id: repResult.raw[0].id,
       })
     } catch (error) {
       console.error(error)
