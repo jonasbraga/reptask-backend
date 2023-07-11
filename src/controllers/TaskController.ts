@@ -211,4 +211,33 @@ export abstract class TaskController {
       })
     }
   }
+
+  static validateCreateEntries (body: any) {
+    if (!('title' in body)) throw new Error('Campo title é obrigatório')
+    if (!('deadline' in body)) throw new Error('Campo deadline é obrigatório')
+    if (!('responsible_user' in body.score)) throw new Error('Campo score.responsible_user é obrigatório')
+    if (!('value' in body.score)) throw new Error('Campo score.value é obrigatório')
+    if (!('finished' in body.score)) throw new Error('Campo score.finished é obrigatório')
+  }
+
+  static validateEditEntries (body: any, params: any) {
+    if (!('id' in params)) throw new Error('Campo task_id é obrigatório')
+    if (!('title' in body)) throw new Error('Campo title é obrigatório')
+    if (!('deadline' in body)) throw new Error('Campo deadline é obrigatório')
+    if (!('responsible_user' in body.score)) throw new Error('Campo score.responsible_user é obrigatório')
+    if (!('value' in body.score)) throw new Error('Campo score.value é obrigatório')
+    if (!('finished' in body.score)) throw new Error('Campo score.finished é obrigatório')
+  }
+
+  static validateDeleteEntries (params: any) {
+    if (!('id' in params)) throw new Error('Campo task_id é obrigatório')
+  }
+
+  static validateGetEntries (params: any) {
+    if (!('option' in params)) throw new Error('Campo option é obrigatório')
+  }
+
+  static validateGetAllEntries (params: any) {
+    if (!('username' in params)) throw new Error('Campo username é obrigatório')
+  }
 }

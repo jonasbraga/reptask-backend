@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import { getManager } from 'typeorm'
 import { connect } from '../database/index'
 import bcrypt from 'bcrypt'
+import { RequestEmailNewRep } from '../Services/NotificationEmail'
 require('dotenv').config()
 
 connect()
@@ -91,6 +92,26 @@ export abstract class LoginController {
       })
     } catch (error) {
       console.error(error)
+      return response.status(500).send({
+        error: 'Houve um erro na aplicação',
+      })
+    }
+  }
+
+  static async newRep (request: Request, response: Response) {
+    try {
+      const body = request.body
+      if (body.email) {
+        await new RequestEmailNewRep().sendEmail(
+          'reptaskapp@gmail.com',
+          'Solicitação de criação de nova república na RepTask',
+          'novo pedido de criação de república: ' + JSON.stringify(body)
+        )
+      }
+      response.status(201).send({
+        message: 'Pedido cadastrado!',
+      })
+    } catch {
       return response.status(500).send({
         error: 'Houve um erro na aplicação',
       })
