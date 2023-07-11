@@ -157,7 +157,7 @@ export abstract class TaskController {
         .from('tasks', '')
         .innerJoin('scores', '', 'tasks.id = scores.task_id')
         .innerJoin('users', '', 'scores.responsible_user = users.id')
-        .where(`tasks.rep_id = ${repId}`)
+        .where(`users.reps_id = ${repId}`)
 
       const user = Number(request.params.username)
       if (user) {
@@ -199,7 +199,8 @@ export abstract class TaskController {
         .select('*')
         .from('tasks', '')
         .innerJoin('scores', '', 'tasks.id = scores.task_id')
-        .where(`tasks.rep_id = ${repId}`)
+        .innerJoin('users', '', 'scores.responsible_user = users.id')
+        .where(`users.reps_id = ${repId}`)
 
       const user = Number(request.params.username)
       if (user) {
