@@ -1,0 +1,28 @@
+version: '3'
+services:
+  nodejs:
+    container_name: nodejs_server_tests
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/app
+      - /app/node_modules
+    ports:
+      - 4000:3000
+    depends_on:
+      - postgres-tests
+    links:
+      - postgres-tests
+
+  postgres-tests:
+    image: postgres
+    container_name: local_pgdb_tests
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - ../init.sql:/docker-entrypoint-initdb.d/init.sql

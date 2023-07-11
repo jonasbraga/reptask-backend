@@ -10,7 +10,7 @@ export abstract class ItemBonusController {
   static async create (request: Request, response: Response) {
     try {
       const body = request.body
-      await manager
+      const item = await manager
         .createQueryBuilder()
         .insert()
         .into('item_bonus')
@@ -23,6 +23,7 @@ export abstract class ItemBonusController {
 
       response.status(200).send({
         message: 'Item bônus cadastrado com sucesso!',
+        itemId: item.raw[0].id,
       })
     } catch (error) {
       console.error(error)
