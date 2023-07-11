@@ -149,6 +149,7 @@ export abstract class TaskController {
   static async get (request: Request, response: Response) {
     try {
       const option = Number(request.params.option)
+      const repId = Number(request.params.rep)
 
       const taskQuery = manager
         .createQueryBuilder()
@@ -156,6 +157,7 @@ export abstract class TaskController {
         .from('tasks', '')
         .innerJoin('scores', '', 'tasks.id = scores.task_id')
         .innerJoin('users', '', 'scores.responsible_user = users.id')
+        .where(`tasks.rep_id = ${repId}`)
 
       const user = Number(request.params.username)
       if (user) {
@@ -191,11 +193,13 @@ export abstract class TaskController {
 
   static async getAll (request: Request, response: Response) {
     try {
+      const repId = Number(request.params.rep)
       const tasksQuery = manager
         .createQueryBuilder()
         .select('*')
         .from('tasks', '')
         .innerJoin('scores', '', 'tasks.id = scores.task_id')
+        .where(`tasks.rep_id = ${repId}`)
 
       const user = Number(request.params.username)
       if (user) {
