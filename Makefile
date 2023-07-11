@@ -8,7 +8,7 @@ set_test_db=`sed -i '' 's/^DATABASE_IP.*/DATABASE_IP = postgres-tests/' .env`
 
 prepare:
 	cp .env.example .env
-	echo "DATABASE_NAME=reptask\nDATABASE_PASS=admin\nDATABASE_PORT=5432\nDATABASE_IP=postgres-tests\nDATABASE_USER=user\nNODE_PORT=3000\nADMIN_TOKEN=5GWg^@4&d$H7m%MJP8^8" > .env
+	echo "DATABASE_NAME=reptask\nDATABASE_PASS=admin\nDATABASE_PORT=5432\nDATABASE_IP=postgres-tests\nDATABASE_USER=user\nNODE_PORT=3000\nADMIN_TOKEN=5GWg^@4&d7mMJP8^8" > .env
 
 up:
 	${set_prod_db}
