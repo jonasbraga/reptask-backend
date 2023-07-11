@@ -32,6 +32,9 @@ const authenticateToken = (req, res, next) => {
 /// //////////// AUTENTICAÇÃO
 routes.post('/login', LoginController.login)
 routes.post('/change-password/:id', LoginController.changePassword)
+/// //// solicitação de criação de republica
+routes.route('/newRep').post(LoginController.newRep)
+
 /// ////////////////////////////////////////////////////////////////////
 
 // CRUD COMMENTS
