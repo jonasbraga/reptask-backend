@@ -17,8 +17,8 @@ up:
 test:
 	${set_test_db}
 	docker-compose -f tests/docker-compose.yaml up -d
-	docker-compose -f tests/docker-compose.yaml exec nodejs npm run test:integration
-	docker-compose -f tests/docker-compose.yaml down
+	docker-compose -f tests/docker-compose.yaml exec nodejs npm run test:integration && npm run test:unit
+	docker-compose -f tests/docker-compose.yaml down -v
 
 down:
 	docker-compose down

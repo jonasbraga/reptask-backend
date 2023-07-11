@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { TaskController } from '../src/controllers/TaskController'
+import { TaskController } from '../../src/controllers/TaskController'
 
 describe('Testing Tasks', () => {
   describe('Testing Tasks.create', () => {
