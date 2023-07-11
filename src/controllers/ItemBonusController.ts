@@ -41,7 +41,7 @@ export abstract class ItemBonusController {
         .update('public.item_bonus')
         .set({
           title: body.title,
-          description: body.description || null,
+          value: body.value || null,
         })
         .where(`id = ${itemId}`)
         .execute()
