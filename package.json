@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "test": "npm run test:unit",
     "test:unit": "jest --testPathPattern=./tests/unit --forceExit --coverage",
     "test:integration": "jest --testPathPattern=./tests/integration/ --runInBand",
     "start": "ts-node-dev --respawn --transpile-only src/server.ts",
