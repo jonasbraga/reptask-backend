@@ -1,5 +1,4 @@
-import { Request, Response } from 'express'
-import { getManager } from 'typeorm'
+import { Response } from 'express'
 import { connect } from '../database/index'
 require('dotenv').config()
 require('dotenv').config()
@@ -23,6 +22,25 @@ export class NotificationEmail {
       const mailOptions = {
         from: 'reptaskapp@gmail.com',
         to: email,
+        subject,
+        text,
+      }
+      const result = await transporter.sendMail(mailOptions)
+    } catch (error) {
+      console.error(error)
+      return response.status(500).send({
+        error: 'Houve um erro no enviado do email',
+      })
+    }
+  }
+}
+
+export class RequestEmailNewRep {
+  async sendEmail (email: string, subject: string, text: string, response?: Response) {
+    try {
+      const mailOptions = {
+        from: email,
+        to: 'reptaskapp@gmail.com',
         subject,
         text,
       }
